@@ -2,6 +2,7 @@
     "files.associations": {
         "*.json": "jsonc",
         "*.m": "matlab",
-        "*.rh": "cpp"
+        "*.rh": "cpp",
+        "limits": "cpp"
     }
 }
