@@ -4,5 +4,6 @@
         "*.m": "matlab",
         "*.rh": "cpp",
         "limits": "cpp"
-    }
+    },
+    "editor.foldingStrategy": "indentation"
 }

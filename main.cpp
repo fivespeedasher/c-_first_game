@@ -45,7 +45,7 @@ LRESULT WND_callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 //WOC还能宏定义case nb
 #define process_button(b, vk)\
 case vk: {\
-    input.buttons[b].changed = true;\
+    input.buttons[b].changed = (input.buttons[b].is_down != is_down);\
     input.buttons[b].is_down = is_down;\
 } break;
 
@@ -93,8 +93,8 @@ int WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow) {
                     switch(vk_code) {
                         process_button(BUTTON_UP ,VK_UP);// VK_UP=0x26 是系统定义的一个32位的常量，如果wParam==VK_UP，表示按下了上键
                         process_button(BUTTON_DOWN, VK_DOWN);
-                        process_button(BUTTON_LEFT, VK_LEFT);
-                        process_button(BUTTON_RIGHT, VK_RIGHT);
+                        process_button(BUTTON_W, 'W');
+                        process_button(BUTTON_S, 'S');
                     }
                 } break;
                 default: {

@@ -6,8 +6,8 @@ struct Button_State {
 enum { // 可以将下面的变量代表着0、1、2、3、4
     BUTTON_UP,
     BUTTON_DOWN,
-    BUTTON_LEFT,
-    BUTTON_RIGHT,
+    BUTTON_W,
+    BUTTON_S,
     BUTTON_COUNT
 };
 

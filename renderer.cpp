@@ -22,15 +22,19 @@ draw_rect_pixels(int x0, int y0, int x1, int y1, u32 color) {
     }
 }
 
+global_variable float render_scale = 0.01f;
 internal void 
 draw_rect(float x, float y, float half_x, float half_y, u32 color) {
-    // x属于[0,1]为中点，half_x * render_state.width为宽度一半
+    // x属于[-1, 1]为中点，half_x * render_state.width为宽度一半
 
     //宽度只受高度影响
-    x *= render_state.width;
-    y *= render_state.height;
-    half_x *= render_state.height;
-    half_y *= render_state.height;
+    x *= render_state.height * render_scale;
+    y *= render_state.height * render_scale;
+    half_x *= render_state.height * render_scale;
+    half_y *= render_state.height * render_scale;
+
+    x += render_state.width / 2.f;
+    y += render_state.height / 2.f;
 
     int x0 = x - half_x;
     int y0 = y - half_y;
