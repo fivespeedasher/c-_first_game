@@ -11,17 +11,23 @@ float player_half_size_x = 2.f, player_half_size_y = 10.f;
 
 float ball_p_x = .0f, ball_p_y = .0f, ball_dp_x = 100.f, ball_dp_y = 0, ball_half_size = 1.f;
 
-float player1_x = arena_half_size_x - player_half_size_x, player2_x = -arena_half_size_x + player_half_size_x;
+float player1_x = arena_half_size_x - player_half_size_x, player2_x = -arena_half_size_x + player_half_size_x;//player1为右侧，方向键
+
+int player_1_score = 0, player_2_score = 0;
 
 internal void
 simulate_player(float* p, float* dp, float ddp, float dt) {
-    ddp -= *dp * 2.5; //摩擦力
+    ddp -= *dp * 3.5; //摩擦力
     *dp = *dp + ddp * dt;
     *p += *dp * dt + .5 * ddp * dt * dt;
     // 玩家边界检测
-    if(*p + player_half_size_y > arena_half_size_y ||
-     *p - player_half_size_y < -arena_half_size_y) {
+    if(*p + player_half_size_y > arena_half_size_y) {
+        *p = arena_half_size_y - player_half_size_y;
         *dp = -.8 * *dp;    
+    }
+    else if(*p - player_half_size_y < -arena_half_size_y) {
+        *p = -arena_half_size_y + player_half_size_y;
+        *dp = -.8 * *dp;
     }
 }
 
@@ -30,7 +36,7 @@ aabb_vs_aabb(float ball_p_x, float ball_p_y, float ball_half_size,
     float player_x, float player_p, float player_half_size_x, float player_half_size_y) {
     return (ball_p_x + ball_half_size > player_x - player_half_size_x && 
     ball_p_x - ball_half_size < player_x + player_half_size_x &&
-    player_p - player_half_size_y <= ball_p_y - ball_half_size &&
+    ball_p_y - ball_half_size >= player_p - player_half_size_y &&
     ball_p_y + ball_half_size <= player_p + player_half_size_y); 
 }
 
@@ -40,9 +46,14 @@ simulate_game(Input* input, float dt) {
     float player1_ddp = .0f, player2_ddp = .0f; //要确保每次停下按就停止加速
     if(is_down(BUTTON_UP)) player1_ddp += 300.f;
     if(is_down(BUTTON_DOWN)) player1_ddp -= 300.f;
+#if 0 //用于禁用部分代码，else、if 1是启用
     if(is_down(BUTTON_W)) player2_ddp += 300.f;
     if(is_down(BUTTON_S)) player2_ddp -= 300.f;
-
+#else
+    player2_ddp = (ball_p_y - player2_p) * 10;
+    if(player2_ddp > 300) player2_ddp = 300;
+    if(player2_ddp < -300) player2_ddp = -300;
+#endif
     simulate_player(&player1_p, &player1_dp, player1_ddp, dt);
     simulate_player(&player2_p, &player2_dp, player2_ddp, dt);
 
@@ -64,11 +75,19 @@ simulate_game(Input* input, float dt) {
         }
 
         // 球边界检测
-        if(ball_p_x - ball_half_size < -arena_half_size_x || ball_p_x + ball_half_size > arena_half_size_x) {
+        if(ball_p_x - ball_half_size < -arena_half_size_x) {
             ball_p_x = .0f;
             ball_p_y = .0f;
             ball_dp_x = -ball_dp_x;
             ball_dp_y = .0f;
+            player_1_score ++;
+        }
+        else if(ball_p_x + ball_half_size > arena_half_size_x) {
+            ball_p_x = .0f;
+            ball_p_y = .0f;
+            ball_dp_x = -ball_dp_x;
+            ball_dp_y = .0f;
+            player_2_score ++;
         }
         else if(ball_p_y - ball_half_size < -arena_half_size_y) {
             ball_p_y = -arena_half_size_y + ball_half_size; // 以免程序过了太多才判断
@@ -80,9 +99,13 @@ simulate_game(Input* input, float dt) {
         }
     }
 
+    
+
     // rendering
+    draw_number(player_1_score, 90.f, 40.f, .7f, 0xFF7F50);
+    draw_number(player_2_score, -87.f, 40.f, .7f, 0xFF7F50);
     draw_rect(0, 0, arena_half_size_x, arena_half_size_y, 0xFFEBCD);
     draw_rect(ball_p_x, ball_p_y, ball_half_size, ball_half_size, 0xCD2626);
-    draw_rect(player1_x, player1_p, player_half_size_x, player_half_size_y, 0x8B4513);
+    draw_rect(player1_x, player1_p, player_half_size_x, player_half_size_y, 0x8B4513); 
     draw_rect(player2_x, player2_p, player_half_size_x, player_half_size_y, 0x8B4513);
 }

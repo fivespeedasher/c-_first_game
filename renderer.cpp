@@ -25,7 +25,7 @@ draw_rect_pixels(int x0, int y0, int x1, int y1, u32 color) {
 global_variable float render_scale = 0.01f;
 internal void 
 draw_rect(float x, float y, float half_x, float half_y, u32 color) {
-    // x属于[-1, 1]为中点，half_x * render_state.width为宽度一半
+    // x属于[-100, 100]为中点，y∈[-50, 50]。half_x * render_state.width为宽度一半
 
     //宽度只受高度影响
     x *= render_state.height * render_scale;
@@ -42,4 +42,73 @@ draw_rect(float x, float y, float half_x, float half_y, u32 color) {
     int y1 = y + half_y;
 
     draw_rect_pixels(x0, y0, x1, y1, color);
+}
+
+internal void
+draw_number(int number, float x, float y, float size, u32 color) {
+    // x,y是字的中心
+    float half_size = size / 2.f;
+    while(number) {
+        int digit = number % 10;
+        switch(digit) {
+            case 0: {
+                draw_rect(x - size, y, half_size, 2.5f * size, color);
+                draw_rect(x + size, y, half_size, 2.5f * size, color);
+                draw_rect(x, y + 2 * size, half_size, half_size, color);
+                draw_rect(x, y - 2 * size, half_size, half_size, color);}break;
+            case 1: {
+                draw_rect(x + size, y, half_size, 2.5f * size, color);}break;
+            case 2: {
+                draw_rect(x, y + size * 2.f, 1.5f * size, half_size, color);
+                draw_rect(x, y, 1.5f * size, half_size, color);
+                draw_rect(x, y - size * 2.f, 1.5f * size, half_size, color);
+                draw_rect(x + size, y + size, half_size, half_size, color);
+                draw_rect(x - size, y - size, half_size, half_size, color);} break;
+
+            case 3: {
+                draw_rect(x - half_size, y + size * 2.f, size, half_size, color);
+                draw_rect(x - half_size, y, size, half_size, color);
+                draw_rect(x - half_size, y - size * 2.f, size, half_size, color);
+                draw_rect(x + size, y, half_size, 2.5f * size, color);} break;
+
+            case 4: {
+                draw_rect(x + size, y, half_size, 2.5f * size, color);
+                draw_rect(x - size, y + size, half_size, 1.5f * size, color);
+                draw_rect(x, y, half_size, half_size, color);} break;
+
+            case 5: {
+                draw_rect(x, y + size * 2.f, 1.5f * size, half_size, color);
+                draw_rect(x, y, 1.5f * size, half_size, color);
+                draw_rect(x, y - size * 2.f, 1.5f * size, half_size, color);
+                draw_rect(x - size, y + size, half_size, half_size, color);
+                draw_rect(x + size, y - size, half_size, half_size, color);} break;
+
+            case 6: {
+                draw_rect(x + half_size, y + size * 2.f, size, half_size, color);
+                draw_rect(x + half_size, y, size, half_size, color);
+                draw_rect(x + half_size, y - size * 2.f, size, half_size, color);
+                draw_rect(x - size, y, half_size, 2.5f * size, color);
+                draw_rect(x + size, y - size, half_size, half_size, color);} break;
+
+            case 7: {
+                draw_rect(x + size, y, half_size, 2.5f * size, color);
+                draw_rect(x - half_size, y + size * 2.f, size, half_size, color);} break;
+
+            case 8: {
+                draw_rect(x - size, y, half_size, 2.5f * size, color);
+                draw_rect(x + size, y, half_size, 2.5f * size, color);
+                draw_rect(x, y + size * 2.f, half_size, half_size, color);
+                draw_rect(x, y - size * 2.f, half_size, half_size, color);
+                draw_rect(x, y, half_size, half_size, color);} break;
+
+            case 9: {
+                draw_rect(x - half_size, y + size * 2.f, size, half_size, color);
+                draw_rect(x - half_size, y, size, half_size, color);
+                draw_rect(x - half_size, y - size * 2.f, size, half_size, color);
+                draw_rect(x + size, y, half_size, 2.5f * size, color);
+                draw_rect(x - size, y + size, half_size, half_size, color);} break;
+        }
+        x -= 4 * size;
+        number /= 10;
+    }
 }
